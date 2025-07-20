@@ -65,116 +65,9 @@ MEAN_MOTION_REV_PER_DAY[0] = 15.19  # Altitude ~550000 km
 ALTITUDE_M[0] = 550000  # Altitude ~550000 km
 NUM_ORBS[0] = 72
 NUM_SATS_PER_ORB[0] = 22
-INCLINATION_DEGREE[0] = 53
+INCLINATION_DEGREE[0] = 89
 BASE_ID[0] = 0
 ORB_WISE_IDS[0] = []
-
-# MEAN_MOTION_REV_PER_DAY[1] = 13.4  # Altitude ~1110 km
-# ALTITUDE_M[1] = 1110000  # Altitude ~1110 km
-# NUM_ORBS[1] = 32
-# NUM_SATS_PER_ORB[1] = 50
-# INCLINATION_DEGREE[1] = 53.8
-# BASE_ID[1] = 1584
-# ORB_WISE_IDS[1] = []
-
-# MEAN_MOTION_REV_PER_DAY[2] = 13.35  # Altitude ~1130 km
-# ALTITUDE_M[2] = 1130000  # Altitude ~1130 km
-# NUM_ORBS[2] = 8
-# NUM_SATS_PER_ORB[2] = 50
-# INCLINATION_DEGREE[2] = 74
-# BASE_ID[2] = 3184
-# ORB_WISE_IDS[2] = []
-
-# MEAN_MOTION_REV_PER_DAY[3] = 12.97  # Altitude ~1275 km
-# ALTITUDE_M[3] = 1275000  # Altitude ~1275 km
-# NUM_ORBS[3] = 5
-# NUM_SATS_PER_ORB[3] = 75
-# INCLINATION_DEGREE[3] = 81
-# BASE_ID[3] = 3584
-# ORB_WISE_IDS[3] = []
-
-# MEAN_MOTION_REV_PER_DAY[4] = 12.84  # Altitude ~1325 km
-# ALTITUDE_M[4] = 1325000  # Altitude ~1325 km
-# NUM_ORBS[4] = 6
-# NUM_SATS_PER_ORB[4] = 75
-# INCLINATION_DEGREE[4] = 70
-# BASE_ID[4] = 3959
-# ORB_WISE_IDS[4] = []
-
-
-"""
-# TELESAT
-NAME = "Telesat"
-SHELL_CNTR = 2
-
-MEAN_MOTION_REV_PER_DAY = [None]*SHELL_CNTR
-ALTITUDE_M = [None]*SHELL_CNTR
-NUM_ORBS = [None]*SHELL_CNTR
-NUM_SATS_PER_ORB = [None]*SHELL_CNTR
-INCLINATION_DEGREE = [None]*SHELL_CNTR
-BASE_ID = [None]*SHELL_CNTR
-ORB_WISE_IDS = [None]*SHELL_CNTR
-
-MEAN_MOTION_REV_PER_DAY[0] = 13.66  # Altitude ~1015 km
-ALTITUDE_M[0] = 1015000  # Altitude ~1015 km
-NUM_ORBS[0] = 27
-NUM_SATS_PER_ORB[0] = 13
-INCLINATION_DEGREE[0] = 98.98
-BASE_ID[0] = 0
-ORB_WISE_IDS[0] = []
-
-MEAN_MOTION_REV_PER_DAY[1] = 12.84  # Altitude ~1325 km
-ALTITUDE_M[1] = 1325000  # Altitude ~1325 km
-NUM_ORBS[1] = 40
-NUM_SATS_PER_ORB[1] = 33
-INCLINATION_DEGREE[1] = 50.88
-BASE_ID[1] = 351
-ORB_WISE_IDS[1] = []
-"""
-
-"""
-# KUIPER
-NAME = "kuiper"
-################################################################
-# The below constants are taken from Kuiper's FCC filing as below:
-# [1]: https://www.itu.int/ITU-R/space/asreceived/Publication/DisplayPublication/8716
-################################################################
-
-SHELL_CNTR = 3
-
-MEAN_MOTION_REV_PER_DAY = [None]*SHELL_CNTR
-ALTITUDE_M = [None]*SHELL_CNTR
-NUM_ORBS = [None]*SHELL_CNTR
-NUM_SATS_PER_ORB = [None]*SHELL_CNTR
-INCLINATION_DEGREE = [None]*SHELL_CNTR
-BASE_ID = [None]*SHELL_CNTR
-ORB_WISE_IDS = [None]*SHELL_CNTR
-
-MEAN_MOTION_REV_PER_DAY[0] = 14.80  # Altitude ~630 km
-ALTITUDE_M[0] = 630000  # Altitude ~630 km
-NUM_ORBS[0] = 34
-NUM_SATS_PER_ORB[0] = 34
-INCLINATION_DEGREE[0] = 51.9
-BASE_ID[0] = 0
-ORB_WISE_IDS[0] = []
-
-MEAN_MOTION_REV_PER_DAY[1] = 14.86  # Altitude ~610 km
-ALTITUDE_M[1] = 610000  # Altitude ~610 km
-NUM_ORBS[1] = 36
-NUM_SATS_PER_ORB[1] = 36
-INCLINATION_DEGREE[1] = 42
-BASE_ID[1] = 1156
-ORB_WISE_IDS[1] = []
-
-MEAN_MOTION_REV_PER_DAY[2] = 14.93  # Altitude ~590 km
-ALTITUDE_M[2] = 590000  # Altitude ~590 km
-NUM_ORBS[2] = 28
-NUM_SATS_PER_ORB[2] = 28
-INCLINATION_DEGREE[2] = 33
-BASE_ID[2] = 2452
-ORB_WISE_IDS[2] = []
-"""
-
 
 # General files needed to generate visualizations; Do not change for different simulations
 topFile = "../static_html/top.html"
@@ -224,6 +117,8 @@ def generate_satellite_trajectories():
             sat1 = grid_links[key]["sat1"]
             sat2 = grid_links[key]["sat2"]
             if (grid_links[key]["dist"] > 1 and grid_links[key]["dist"] < 21):
+                continue
+            if (max(sat1, sat2) >= 22 * 36 and grid_links[key]["inter_orbit"]):
                 continue
             color = COLOR[0] if grid_links[key]["inter_orbit"] else COLOR[1] 
             viz_string += "viewer.entities.add({name : '', polyline: { positions: Cesium.Cartesian3.fromDegreesArrayHeights([" \
