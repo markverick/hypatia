@@ -44,6 +44,7 @@ EPOCH = "2000-01-01 00:00:00"
 # Shell wise color codes
 # COLOR = [[255, 0, 0, 200], [32, 128, 46, 200], [0, 0, 255, 200], [245, 66, 242, 200], [245, 126, 66, 200]]
 COLOR = ['CRIMSON', 'FORESTGREEN', 'DODGERBLUE', 'PERU', 'BLUEVIOLET', 'DARKMAGENTA']
+COLOR = ['#1f77b4', '#ff7f0e']
 # CONSTELLATION SPECIFIC PARAMETERS
 
 
@@ -209,6 +210,7 @@ def generate_satellite_trajectories():
             MEAN_MOTION_REV_PER_DAY[i],
             ALTITUDE_M[i]
         )
+        sat_objs = sat_objs[:22 * 6]
         for j in range(len(sat_objs)):
             sat_objs[j]["sat_obj"].compute(EPOCH)
             viz_string += "var redSphere = viewer.entities.add({name : '', position: Cesium.Cartesian3.fromDegrees(" \
@@ -217,10 +219,13 @@ def generate_satellite_trajectories():
                 sat_objs[j]["alt_km"] * 1000) + "), " \
                           + "ellipsoid : {radii : new Cesium.Cartesian3(30000.0, 30000.0, 30000.0), " \
                           + "material : Cesium.Color.BLACK.withAlpha(1),}});\n"
-        orbit_links = util.find_orbit_links(sat_objs, NUM_ORBS[i], NUM_SATS_PER_ORB[i])
-        for key in orbit_links:
-            sat1 = orbit_links[key]["sat1"]
-            sat2 = orbit_links[key]["sat2"]
+        grid_links = util.find_grid_links(sat_objs, NUM_ORBS[i], NUM_SATS_PER_ORB[i])
+        for key in grid_links:
+            sat1 = grid_links[key]["sat1"]
+            sat2 = grid_links[key]["sat2"]
+            if (grid_links[key]["dist"] > 1):
+                continue
+            color = COLOR[0] if grid_links[key]["inter_orbit"] else COLOR[1] 
             viz_string += "viewer.entities.add({name : '', polyline: { positions: Cesium.Cartesian3.fromDegreesArrayHeights([" \
                           + str(math.degrees(sat_objs[sat1]["sat_obj"].sublong)) + "," \
                           + str(math.degrees(sat_objs[sat1]["sat_obj"].sublat)) + "," \
@@ -228,9 +233,9 @@ def generate_satellite_trajectories():
                           + str(math.degrees(sat_objs[sat2]["sat_obj"].sublong)) + "," \
                           + str(math.degrees(sat_objs[sat2]["sat_obj"].sublat)) + "," \
                           + str(sat_objs[sat2]["alt_km"] * 1000) + "]), " \
-                          + "width: 0.5, arcType: Cesium.ArcType.NONE, " \
+                          + "width: 1, arcType: Cesium.ArcType.NONE, " \
                           + "material: new Cesium.PolylineOutlineMaterialProperty({ " \
-                          + "color: Cesium.Color."+COLOR[i]+".withAlpha(0.4), outlineWidth: 0, outlineColor: Cesium.Color.BLACK})}});"
+                          + "color: Cesium.Color.fromCssColorString(\'"+color+"\'), outlineWidth: 0, outlineColor: Cesium.Color.BLACK})}});"
     return viz_string
 
 

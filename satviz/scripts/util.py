@@ -169,7 +169,8 @@ def find_grid_links(sat_positions, num_orbit, num_sats_per_orbit):
         grid_links[cntr] = {
             "sat1": i,
             "sat2": sel_sat_id,
-            "dist": -1.0
+            "dist": abs(sat_positions[i]["orb_id"] - sat_positions[sel_sat_id]["orb_id"]) + abs(sat_positions[i]["orb_sat_id"] - sat_positions[sel_sat_id]["orb_sat_id"]),
+            "inter_orbit": True
         }
         cntr += 1
         sel_sat_id = get_neighbor_satellite(sat_positions[i]["orb_id"], sat_positions[i]["orb_sat_id"],
@@ -178,7 +179,8 @@ def find_grid_links(sat_positions, num_orbit, num_sats_per_orbit):
         grid_links[cntr] = {
             "sat1": i,
             "sat2": sel_sat_id,
-            "dist": -1.0
+            "dist": abs(sat_positions[i]["orb_id"] - sat_positions[sel_sat_id]["orb_id"]) + abs(sat_positions[i]["orb_sat_id"] - sat_positions[sel_sat_id]["orb_sat_id"]),
+            "inter_orbit": False
         }
         cntr += 1
     #print("num links:", cntr)
