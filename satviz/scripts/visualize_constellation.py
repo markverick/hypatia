@@ -239,9 +239,12 @@ def write_viz_files():
     Writes JSON and TML files to the output folder
     :return: None
     """
+    with open("cesium-token", "r") as f:
+        token = f.read().strip()
     writer_html = open(OUT_HTML_FILE, 'w')
     with open(topFile, 'r') as fi:
-        writer_html.write(fi.read())
+        original = fi.read()
+        writer_html.write(original.replace("<CESIUM_ACCESS_TOKEN>", token))
     writer_html.write(viz_string)
     with open(bottomFile, 'r') as fb:
         writer_html.write(fb.read())

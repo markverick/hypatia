@@ -9,12 +9,7 @@ a Cesium access token (via [https://cesium.com/]()).
 
 1. Obtain a Cesium access token at [https://cesium.com/]()
 
-2. Edit `static_html/top.html`, and insert your Cesium access 
-   token at line 10:
-
-   ```javascript
-   Cesium.Ion.defaultAccessToken = '<CESIUM_ACCESS_TOKEN>';
-   ```
+2. Create a text file `scripts/cesium-token`, and insert your Cesium access 
 
 3. Now you are able to make use of the scripts in `scripts/`
 
