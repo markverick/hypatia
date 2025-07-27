@@ -13,8 +13,8 @@
       <div class="legend-title">Node Traffic</div>
       <div class="color-bar" id="color-bar-node"></div>
       <div class="labels">
-        <span id="legend-node-min">–</span>
         <span id="legend-node-max">–</span>
+        <span id="legend-node-min">–</span>
       </div>
       <div class="legend-tooltip" id="tooltip-node">-- MB</div>
     </div>
@@ -24,8 +24,8 @@
       <div class="legend-title">Link Traffic</div>
       <div class="color-bar link" id="color-bar-link"></div>
       <div class="labels">
-        <span id="legend-link-min">–</span>
         <span id="legend-link-max">–</span>
+        <span id="legend-link-min">–</span>
       </div>
       <div class="legend-tooltip" id="tooltip-link">-- MB</div>
     </div>
@@ -157,10 +157,10 @@ scene.imageryLayers.add(imageryLayer);
   const linkMaxLabel = document.getElementById('legend-link-max');
 
   // Replace these with real values from Python
-  const minNode = 8.5;     // in MB
-  const maxNode = 42.7;
-  const minLink = 0.03;
-  const maxLink = 12.45;
+  const minNode = 5.895893096923828;     // in MB
+  const maxNode = 6.449306488037109;
+  const minLink = 1.3553352355957031;
+  const maxLink = 1.6731948852539062;
 
   // Set min/max labels
   nodeMinLabel.textContent = `${minNode.toFixed(1)} MB`;

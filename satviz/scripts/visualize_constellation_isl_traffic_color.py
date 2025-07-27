@@ -263,7 +263,7 @@ def traffic_to_hex_color(traffic_values):
         # Convert RGBA (0–1 floats) to hex string
         r, g, b, _ = [int(255 * x) for x in rgba]
         color_map[node_id] = f'#{r:02x}{g:02x}{b:02x}'
-
+    print(f"Per-node ranges: {min_traffic} - {max_traffic}")
     return color_map
 
 def traffic_to_hex_color_link(traffic_values):
@@ -281,6 +281,8 @@ def traffic_to_hex_color_link(traffic_values):
         # Convert RGBA (0–1 floats) to hex string
         r, g, b, _ = [int(255 * x) for x in rgba]
         color_map[link_id] = f'#{r:02x}{g:02x}{b:02x}'
+        # print(traffic, f'#{r:02x}{g:02x}{b:02x}')
+    print(f"Per-link ranges: {min_traffic} - {max_traffic}")
     return color_map
 
 def generate_satellite_trajectories():
