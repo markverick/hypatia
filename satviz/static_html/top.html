@@ -7,6 +7,101 @@
 </head>
 <body>
   <div id="cesiumContainer" style="width: 100%; height:100%"></div>
+    <div id="legend-group">
+    <!-- Node Traffic Legend -->
+    <div class="legend" id="legend-node">
+      <div class="legend-title">Node Traffic</div>
+      <div class="color-bar" id="color-bar-node"></div>
+      <div class="labels">
+        <span id="legend-node-min">–</span>
+        <span id="legend-node-max">–</span>
+      </div>
+      <div class="legend-tooltip" id="tooltip-node">-- MB</div>
+    </div>
+
+    <!-- Link Traffic Legend -->
+    <div class="legend" id="legend-link">
+      <div class="legend-title">Link Traffic</div>
+      <div class="color-bar link" id="color-bar-link"></div>
+      <div class="labels">
+        <span id="legend-link-min">–</span>
+        <span id="legend-link-max">–</span>
+      </div>
+      <div class="legend-tooltip" id="tooltip-link">-- MB</div>
+    </div>
+  </div>
+  <style>
+  #legend-group {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    cursor: move;
+    z-index: 1000;
+  }
+
+  .legend {
+    width: 50px;
+    height: 240px;
+    border: 1px solid #ccc;
+    padding: 4px 6px;
+    font-family: sans-serif;
+    color: #000;
+    position: relative;
+    background: white;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .legend-title {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .color-bar {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(to top,
+      #440154, #482878, #3e4989, #31688e, #26838f,
+      #1f9d8a, #6cce5a, #b6de2b, #fde725); /* viridis */
+  }
+
+  .color-bar.link {
+    background: linear-gradient(to top,
+      #0d0887, #5e01a6, #9c179e, #cc4678, #ed7953,
+      #fb9f3a, #fdc328, #f0f921); /* plasma */
+  }
+
+  .labels {
+    position: absolute;
+    left: 55px;
+    top: 20px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .labels span {
+    font-size: 12px;
+  }
+
+  .legend-tooltip {
+    position: absolute;
+    left: 60px;
+    padding: 2px 4px;
+    background: white;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    font-size: 12px;
+    display: none;
+    pointer-events: none;
+  }
+  </style>
+
   <script>
     Cesium.Ion.defaultAccessToken = '<CESIUM_ACCESS_TOKEN>';
     var viewer = new Cesium.Viewer('cesiumContainer', {
@@ -43,3 +138,77 @@ const imageryLayer = new Cesium.ImageryLayer(new Cesium.OpenStreetMapImageryProv
   url: "https://tile.openstreetmap.org/"
 }));
 scene.imageryLayers.add(imageryLayer);
+
+
+
+(function () {
+  const legendGroup = document.getElementById('legend-group');
+
+  // Bars and tooltips
+  const nodeBar = document.getElementById('color-bar-node');
+  const linkBar = document.getElementById('color-bar-link');
+  const tooltipNode = document.getElementById('tooltip-node');
+  const tooltipLink = document.getElementById('tooltip-link');
+
+  // Labels
+  const nodeMinLabel = document.getElementById('legend-node-min');
+  const nodeMaxLabel = document.getElementById('legend-node-max');
+  const linkMinLabel = document.getElementById('legend-link-min');
+  const linkMaxLabel = document.getElementById('legend-link-max');
+
+  // Replace these with real values from Python
+  const minNode = 8.5;     // in MB
+  const maxNode = 42.7;
+  const minLink = 0.03;
+  const maxLink = 12.45;
+
+  // Set min/max labels
+  nodeMinLabel.textContent = `${minNode.toFixed(1)} MB`;
+  nodeMaxLabel.textContent = `${maxNode.toFixed(1)} MB`;
+  linkMinLabel.textContent = `${minLink.toFixed(1)} MB`;
+  linkMaxLabel.textContent = `${maxLink.toFixed(1)} MB`;
+
+  // Drag logic (both bars together)
+  let isDragging = false, startX, startY, startLeft, startTop;
+
+  legendGroup.addEventListener('mousedown', function (e) {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    const rect = legendGroup.getBoundingClientRect();
+    startLeft = rect.left;
+    startTop = rect.top;
+    document.body.style.userSelect = 'none';
+  });
+
+  document.addEventListener('mousemove', function (e) {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    legendGroup.style.left = `${startLeft + dx}px`;
+    legendGroup.style.top = `${startTop + dy}px`;
+    legendGroup.style.bottom = 'auto';
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+    document.body.style.userSelect = '';
+  });
+
+  // Tooltip logic
+  function addTooltipHover(bar, tooltip, min, max) {
+    bar.addEventListener('mousemove', function (e) {
+      const rect = bar.getBoundingClientRect();
+      const offsetY = e.clientY - rect.top;
+      const ratio = offsetY / rect.height; // ← Maps top to 0 (min), bottom to 1 (max)
+      const value = max - (max - min) * ratio; // ← Correct top=high, bottom=low
+      tooltip.innerText = `${value.toFixed(2)} MB`;
+      tooltip.style.top = `${offsetY - 10}px`;
+      tooltip.style.display = 'block';
+    });
+    bar.addEventListener('mouseleave', () => tooltip.style.display = 'none');
+  }
+
+  addTooltipHover(nodeBar, tooltipNode, minNode, maxNode);
+  addTooltipHover(linkBar, tooltipLink, minLink, maxLink);
+})();
